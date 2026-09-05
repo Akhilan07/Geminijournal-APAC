@@ -121,63 +121,90 @@ export async function logoutUser(): Promise<void> {
 }
 
 /**
- * Database Persistence: Save interaction document to /users/{userId}/interactions/{interactionId}
+ * Database Persistence: Save journal document to /users/{userId}/journals/{entryId}
+ * (Adheres to Skill Rule 2: Always scope user journal writes strictly under users/{uid}/journals/{entryId})
  */
 export async function saveUserInteraction(
   userId: string,
   interaction: UserInteraction
 ): Promise<void> {
-  const path = `users/${userId}/interactions/${interaction.id}`;
+  const path = `users/${userId}/journals/${interaction.id}`;
   try {
     const cleanData = stripUndefined({
       ...interaction,
       userId,
       updatedAt: new Date().toISOString(),
     });
-    await setDoc(doc(db, "users", userId, "interactions", interaction.id), cleanData);
+    await setDoc(doc(db, "users", userId, "journals", interaction.id), cleanData);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path);
   }
 }
 
 /**
- * Database Persistence: Delete interaction document
+ * Database Persistence: Delete journal document
  */
 export async function deleteUserInteraction(
   userId: string,
   interactionId: string
 ): Promise<void> {
-  const path = `users/${userId}/interactions/${interactionId}`;
+  const path = `users/${userId}/journals/${interactionId}`;
   try {
-    await deleteDoc(doc(db, "users", userId, "interactions", interactionId));
+    await deleteDoc(doc(db, "users", userId, "journals", interactionId));
+    // Also cleanup legacy interactions collection if document existed there
+    try {
+      await deleteDoc(doc(db, "users", userId, "interactions", interactionId));
+    } catch {
+      // Ignore if not present in legacy collection
+    }
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, path);
   }
 }
 
 /**
- * Database Subscription: Listen to real-time interaction list for current user
+ * Database Subscription: Listen to real-time journal list for current user
  */
 export function subscribeUserInteractions(
   userId: string,
   onData: (interactions: UserInteraction[]) => void,
   onError: (error: Error) => void
 ): Unsubscribe {
-  const collectionPath = `users/${userId}/interactions`;
+  const collectionPath = `users/${userId}/journals`;
   try {
-    const q = query(
-      collection(db, "users", userId, "interactions"),
+    const qJournals = query(
+      collection(db, "users", userId, "journals"),
       orderBy("createdAt", "desc")
     );
 
     return onSnapshot(
-      q,
-      (snapshot) => {
+      qJournals,
+      (journalsSnap) => {
         const list: UserInteraction[] = [];
-        snapshot.forEach((docSnap) => {
+        journalsSnap.forEach((docSnap) => {
           list.push(docSnap.data() as UserInteraction);
         });
-        onData(list);
+
+        // Also check legacy interactions collection if journals is empty
+        if (list.length === 0) {
+          const qInteractions = query(
+            collection(db, "users", userId, "interactions"),
+            orderBy("createdAt", "desc")
+          );
+          onSnapshot(
+            qInteractions,
+            (interactionsSnap) => {
+              const legacyList: UserInteraction[] = [];
+              interactionsSnap.forEach((docSnap) => {
+                legacyList.push(docSnap.data() as UserInteraction);
+              });
+              onData(legacyList);
+            },
+            () => onData(list)
+          );
+        } else {
+          onData(list);
+        }
       },
       (error) => {
         try {

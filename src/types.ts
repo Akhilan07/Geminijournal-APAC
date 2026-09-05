@@ -6,6 +6,14 @@ export interface ChatTurn {
   timestamp: string;
 }
 
+export interface JournalLocation {
+  lat: number;
+  lng: number;
+  address: string;
+  placeId?: string;
+  name?: string;
+}
+
 export interface UserInteraction {
   id: string;
   userId: string;
@@ -14,6 +22,7 @@ export interface UserInteraction {
   aiResponse: string;
   mode: InteractionMode;
   tags: string[];
+  location?: JournalLocation | null;
   turns?: ChatTurn[];
   modelUsed?: string;
   createdAt: string;

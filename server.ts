@@ -39,22 +39,32 @@ app.get("/api/health", (_req: Request, res: Response) => {
     status: "ok",
     timestamp: new Date().toISOString(),
     geminiConfigured: Boolean(process.env.GEMINI_API_KEY),
+    googleMapsConfigured: Boolean(process.env.GOOGLE_MAPS_API_KEY),
+  });
+});
+
+// App configuration endpoint (Secure env disclosure)
+app.get("/api/config", (_req: Request, res: Response) => {
+  res.json({
+    googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || "",
   });
 });
 
 /**
- * Production Directive 6.1: Resilient Model Fallback Ladder
+ * Production Directive 6.1: Resilient Model Fallback Ladder (Skill Rule 3)
  * Ordered by availability and latency:
- * 1. Primary: "gemini-3.6-flash"
- * 2. High-Availability Fallback: "gemini-3.1-flash-lite"
- * 3. Dynamic Alias: "gemini-flash-latest"
- * 4. Deep Reasoning Fallback: "gemini-3.7-flash"
+ * 1. Primary: "gemini-2.5-flash"
+ * 2. High-Availability Fallback: "gemini-2.5-flash-lite"
+ * 3. Next-Gen Primary: "gemini-3.6-flash"
+ * 4. High-Availability Fallback: "gemini-3.1-flash-lite"
+ * 5. Dynamic Alias: "gemini-flash-latest"
  */
 const MODEL_FALLBACK_LADDER = [
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
   "gemini-3.6-flash",
   "gemini-3.1-flash-lite",
   "gemini-flash-latest",
-  "gemini-3.7-flash",
 ] as const;
 
 interface GeminiRequestPayload {

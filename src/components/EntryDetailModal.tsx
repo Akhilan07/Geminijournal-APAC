@@ -15,6 +15,7 @@ import {
   Layers,
 } from "lucide-react";
 import type { UserInteraction, InteractionMode } from "../types";
+import { LocationPreviewMap } from "./LocationPreviewMap";
 
 interface EntryDetailModalProps {
   entry: UserInteraction | null;
@@ -131,6 +132,13 @@ export const EntryDetailModal: React.FC<EntryDetailModalProps> = ({
               </div>
             )}
           </div>
+
+          {/* Location Preview Map if attached */}
+          {entry.location && (
+            <div className="mb-2">
+              <LocationPreviewMap location={entry.location} compact={false} />
+            </div>
+          )}
 
           {/* Conversation Turns */}
           <div className="space-y-4">

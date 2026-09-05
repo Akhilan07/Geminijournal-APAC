@@ -16,6 +16,7 @@ import {
   Filter,
 } from "lucide-react";
 import type { UserInteraction, InteractionMode } from "../types";
+import { LocationPreviewMap } from "./LocationPreviewMap";
 
 interface EntriesHistoryProps {
   entries: UserInteraction[];
@@ -65,7 +66,12 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
         const promptMatch = (item.prompt || "").toLowerCase().includes(q);
         const aiMatch = (item.aiResponse || "").toLowerCase().includes(q);
         const tagsMatch = (item.tags || []).some((t) => t.toLowerCase().includes(q));
-        return titleMatch || promptMatch || aiMatch || tagsMatch;
+        const locationMatch = Boolean(
+          item.location &&
+            ((item.location.address || "").toLowerCase().includes(q) ||
+              (item.location.name || "").toLowerCase().includes(q))
+        );
+        return titleMatch || promptMatch || aiMatch || tagsMatch || locationMatch;
       }
       return true;
     });
@@ -275,6 +281,10 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
                     <span className="rounded-full border border-sep bg-[#0D0D0D] px-2 py-0.5 text-[9px] uppercase tracking-widest font-sans text-gold">
                       {turnCount} turns
                     </span>
+                  )}
+
+                  {item.location && (
+                    <LocationPreviewMap location={item.location} compact={true} />
                   )}
                 </div>
 

@@ -18,8 +18,9 @@ import {
   Layers,
 } from "lucide-react";
 import type { User } from "firebase/auth";
-import type { InteractionMode, UserInteraction, ChatTurn } from "../types";
+import type { InteractionMode, UserInteraction, ChatTurn, JournalLocation } from "../types";
 import { saveUserInteraction } from "../lib/firebase";
+import { LocationPicker } from "./LocationPicker";
 
 interface JournalEditorProps {
   user: User;
@@ -63,6 +64,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   const [promptText, setPromptText] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [location, setLocation] = useState<JournalLocation | null>(null);
   
   // Active session tracking
   const [currentId, setCurrentId] = useState<string>(() => crypto.randomUUID());
@@ -84,6 +86,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       setTitle(initialEntry.title);
       setMode(initialEntry.mode);
       setTags(initialEntry.tags || []);
+      setLocation(initialEntry.location || null);
       setLatestAiResponse(initialEntry.aiResponse);
       setTurns(initialEntry.turns || [
         { role: "user", text: initialEntry.prompt, timestamp: initialEntry.createdAt },
@@ -216,6 +219,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
         aiResponse: aiText,
         mode,
         tags,
+        location,
         turns: updatedTurns,
         modelUsed: resolvedModel,
         createdAt: turns.length === 0 ? now : (turns[0]?.timestamp || now),
@@ -260,6 +264,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
     setLatestAiResponse("");
     setTurns([]);
     setTags([]);
+    setLocation(null);
     setErrorMessage(null);
     setSaveError(null);
   };
@@ -515,6 +520,11 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
             ))}
           </div>
         )}
+
+        {/* Location Picker */}
+        <div className="mb-4">
+          <LocationPicker location={location} onChange={setLocation} />
+        </div>
 
         {/* Prompt Starters (show if thread is empty) */}
         {turns.length === 0 && (
