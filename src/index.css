@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #050505;
+    color: #D1D1D1;
+    font-family: 'Georgia', 'Times New Roman', serif;
+  }
+}
+
+.border-sep {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.bg-subtle {
+  background-color: #0D0D0D;
+}
+
+.bg-canvas {
+  background-color: #050505;
+}
+
+.bg-surface {
+  background-color: #080808;
+}
+
+.text-gold {
+  color: #C5A059;
+}
+
+.border-gold {
+  border-color: #C5A059;
+}
+
+.accent-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C5A059, transparent);
+}

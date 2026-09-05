@@ -1,0 +1,60 @@
+{
+  "entities": {
+    "UserInteraction": {
+      "title": "User Interaction",
+      "description": "A single journal entry, reflection, or conversation with Gemini strictly isolated to an authenticated user.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the interaction document"
+        },
+        "userId": {
+          "type": "string",
+          "description": "The Firebase Auth UID of the owning user"
+        },
+        "title": {
+          "type": "string",
+          "description": "Descriptive title or heading for the journal entry"
+        },
+        "prompt": {
+          "type": "string",
+          "description": "The user's journal reflection, thought, or inquiry"
+        },
+        "aiResponse": {
+          "type": "string",
+          "description": "Gemini's generated reflection, feedback, or summary"
+        },
+        "mode": {
+          "type": "string",
+          "description": "The mode of interaction: reflection, summary, brainstorm, or chat"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Tags associated with the reflection for easy search"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO string timestamp of creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO string timestamp of last update"
+        }
+      },
+      "required": [
+        "userId",
+        "prompt",
+        "aiResponse",
+        "mode",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/interactions/{interactionId}": {
+      "schema": "UserInteraction",
+      "description": "User-isolated document storage for saving reflections, journal entries, and Gemini conversations."
+    }
+  }
+}
