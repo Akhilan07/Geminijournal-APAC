@@ -272,21 +272,25 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   return (
     <div className="relative mx-auto w-full max-w-5xl px-4 py-8 sm:px-8">
       {/* Top Banner with Mode Selector & New Session */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-sep pb-6">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-6">
         <div>
           <h2 className="font-serif text-3xl sm:text-4xl font-light text-white tracking-tight">
             {turns.length > 0 ? (
-              <span className="flex items-center gap-3">
-                <span className="italic">{title || "Active Journal Entry"}</span>
-                <span className="rounded-full border border-sep bg-[#0D0D0D] px-2.5 py-0.5 text-[10px] uppercase tracking-widest font-sans font-medium text-gold">
+              <span className="flex items-center gap-3 flex-wrap">
+                <span className="italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-100 to-amber-300">
+                  {title || "Active Journal Entry"}
+                </span>
+                <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-[10px] uppercase tracking-widest font-sans font-bold text-amber-300 backdrop-blur-md">
                   {turns.length / 2} {turns.length === 2 ? "turn" : "turns"}
                 </span>
               </span>
             ) : (
-              <span className="italic">Navigating the Reflection</span>
+              <span className="italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-100 to-amber-300">
+                Navigating the Reflection
+              </span>
             )}
           </h2>
-          <p className="mt-1 text-xs sm:text-sm text-[#A8A8A8] font-sans font-light">
+          <p className="mt-1.5 text-xs sm:text-sm text-stone-300 font-sans font-light">
             Record your introspection. Gemini analyzes nuances, extracts essential truths, and safeguards memory in Cloud Firestore.
           </p>
         </div>
@@ -296,25 +300,25 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
             <button
               id="btn-start-fresh"
               onClick={handleStartFresh}
-              className="flex items-center gap-1.5 rounded-lg border border-sep bg-[#0D0D0D] px-3.5 py-2 text-[10px] uppercase tracking-[0.2em] font-sans text-stone-300 hover:border-gold hover:text-white transition-all cursor-pointer"
+              className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-[10px] uppercase tracking-[0.2em] font-sans text-stone-300 hover:border-amber-500/40 hover:text-white transition-all duration-200 cursor-pointer backdrop-blur-md"
             >
-              <RotateCcw className="h-3.5 w-3.5 text-gold" />
+              <RotateCcw className="h-3.5 w-3.5 text-amber-400" />
               <span>New Reflection</span>
             </button>
           )}
           <button
             id="btn-view-history-shortcut"
             onClick={onViewHistory}
-            className="flex items-center gap-1.5 rounded-lg border border-sep bg-[#0D0D0D] px-3.5 py-2 text-[10px] uppercase tracking-[0.2em] font-sans text-stone-300 hover:border-gold hover:text-white transition-all cursor-pointer"
+            className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-[10px] uppercase tracking-[0.2em] font-sans text-stone-300 hover:border-amber-500/40 hover:text-white transition-all duration-200 cursor-pointer backdrop-blur-md"
           >
-            <Clock className="h-3.5 w-3.5 text-gold" />
+            <Clock className="h-3.5 w-3.5 text-amber-400" />
             <span>Archive</span>
           </button>
         </div>
       </div>
 
       {/* Mode Selector Cards */}
-      <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mb-8 grid grid-cols-2 gap-3.5 sm:grid-cols-4">
         {modeOptions.map((opt) => {
           const Icon = opt.icon;
           const isSelected = mode === opt.id;
@@ -324,30 +328,32 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               id={`mode-select-${opt.id}`}
               type="button"
               onClick={() => setMode(opt.id)}
-              className={`flex flex-col rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
+              className={`flex flex-col rounded-2xl border p-4 text-left transition-all duration-300 cursor-pointer backdrop-blur-md ${
                 isSelected
-                  ? "border-[#C5A059] bg-[#141414] text-white shadow-md"
-                  : "border-sep bg-[#0D0D0D] text-stone-400 hover:border-gold/50 hover:bg-[#121212]"
+                  ? "border-amber-500/50 bg-gradient-to-br from-amber-500/15 via-black/60 to-black/80 text-white shadow-xl shadow-amber-500/10 ring-1 ring-amber-500/30"
+                  : "border-white/10 bg-black/30 text-stone-400 hover:border-amber-500/30 hover:bg-white/5"
               }`}
             >
               <div className="flex items-center justify-between">
                 <div
-                  className={`flex h-7 w-7 items-center justify-center rounded-md ${
-                    isSelected ? "bg-[#050505] text-gold border border-gold/40" : "bg-[#050505] text-stone-400"
+                  className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
+                    isSelected ? "bg-amber-400 text-black shadow-md shadow-amber-500/30 font-bold" : "bg-white/5 text-stone-400 border border-white/10"
                   }`}
                 >
                   <Icon className="h-4 w-4" />
                 </div>
                 {isSelected && (
-                  <span className="h-2 w-2 rounded-full bg-gold"></span>
+                  <span className="h-2 w-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400 animate-pulse"></span>
                 )}
               </div>
-              <span className="mt-2.5 text-[11px] uppercase tracking-widest font-sans font-semibold">
+              <span className={`mt-3 text-[11px] uppercase tracking-widest font-sans font-bold ${
+                isSelected ? "text-amber-300" : "text-stone-300"
+              }`}>
                 {opt.label}
               </span>
               <span
                 className={`mt-1 text-[11px] line-clamp-2 leading-tight font-sans ${
-                  isSelected ? "text-[#D1D1D1]" : "text-[#777]"
+                  isSelected ? "text-stone-200" : "text-stone-400"
                 }`}
               >
                 {opt.desc}
@@ -367,20 +373,22 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 key={idx}
                 className={
                   isUser
-                    ? "rounded-2xl border border-sep bg-[#080808] p-6 text-[#D1D1D1] ml-4 sm:ml-12"
-                    : "rounded-2xl bg-[#0D0D0D] p-7 border-l-2 border-[#C5A059] border-t border-r border-b border-sep shadow-md mr-4 sm:mr-12"
+                    ? "glass-card rounded-2xl p-6 text-stone-200 ml-4 sm:ml-12 border-white/10"
+                    : "glass-panel rounded-2xl p-7 border-l-4 border-amber-400 border-white/10 shadow-xl mr-4 sm:mr-12"
                 }
               >
-                <div className="flex items-center justify-between border-b border-sep pb-3 mb-4">
-                  <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                  <div className="flex items-center gap-2.5">
                     {isUser ? (
-                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-800 text-[10px] uppercase font-sans text-stone-300">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-stone-800 text-[10px] uppercase font-sans text-stone-300 border border-stone-700 font-bold">
                         U
                       </span>
                     ) : (
-                      <div className="w-2 h-2 rounded-full bg-gold"></div>
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-black text-[10px] font-bold shadow-md shadow-amber-500/20">
+                        <Sparkles className="h-3 w-3" />
+                      </div>
                     )}
-                    <span className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-gold">
+                    <span className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-amber-300">
                       {isUser ? "Your Journal Reflection" : "Insight by Gemini 3.6 Flash"}
                     </span>
                   </div>
@@ -397,7 +405,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                     {turn.text}
                   </p>
                 ) : (
-                  <div className="prose prose-invert prose-stone max-w-none text-[#D1D1D1] font-sans text-sm sm:text-base leading-relaxed">
+                  <div className="prose prose-invert prose-stone max-w-none text-stone-200 font-sans text-sm sm:text-base leading-relaxed">
                     <Markdown>{turn.text}</Markdown>
                   </div>
                 )}
@@ -411,7 +419,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       {errorMessage && (
         <div
           id="editor-error-banner"
-          className="mb-4 flex items-center justify-between rounded-xl bg-rose-950/40 border border-rose-800 p-4 text-xs text-rose-300 font-sans"
+          className="mb-4 flex items-center justify-between rounded-2xl bg-rose-950/60 border border-rose-800 p-4 text-xs text-rose-300 font-sans backdrop-blur-md"
         >
           <div className="flex items-center gap-2">
             <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
@@ -419,7 +427,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
           </div>
           <button
             onClick={() => handleSubmit()}
-            className="font-medium underline hover:text-white cursor-pointer ml-2 uppercase tracking-widest text-[10px]"
+            className="font-bold underline hover:text-white cursor-pointer ml-2 uppercase tracking-widest text-[10px]"
           >
             Retry Call
           </button>
@@ -429,10 +437,10 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       {saveError && (
         <div
           id="firestore-save-error-banner"
-          className="mb-4 flex items-center justify-between rounded-xl bg-amber-950/40 border border-[#C5A059] p-4 text-xs text-amber-200 font-sans"
+          className="mb-4 flex items-center justify-between rounded-2xl bg-amber-950/60 border border-amber-500/40 p-4 text-xs text-amber-200 font-sans backdrop-blur-md"
         >
           <div className="flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 shrink-0 text-gold" />
+            <AlertCircle className="h-4 w-4 shrink-0 text-amber-400" />
             <span>{saveError}</span>
           </div>
           <button
@@ -455,7 +463,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 });
               }
             }}
-            className="rounded-md bg-[#C5A059] px-3 py-1 text-black font-medium hover:bg-white transition-colors cursor-pointer text-[10px] uppercase tracking-widest"
+            className="rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 px-3.5 py-1.5 text-black font-bold hover:brightness-110 transition-all cursor-pointer text-[10px] uppercase tracking-widest shadow-md shadow-amber-500/20"
           >
             Retry Save
           </button>
@@ -465,15 +473,15 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       {saveSuccess && (
         <div
           id="firestore-save-success-banner"
-          className="mb-4 flex items-center gap-2 rounded-xl bg-emerald-950/40 border border-emerald-800 px-4 py-2.5 text-xs text-emerald-300 font-sans"
+          className="mb-4 flex items-center gap-2 rounded-2xl bg-emerald-950/60 border border-emerald-800/80 px-4 py-3 text-xs text-emerald-300 font-sans backdrop-blur-md"
         >
           <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
           <span>Saved to your private Firestore database successfully.</span>
         </div>
       )}
 
-      {/* Editor Form */}
-      <form onSubmit={handleSubmit} className="rounded-2xl border border-sep bg-[#080808] p-6 shadow-xl">
+      {/* Editor Form Container */}
+      <form onSubmit={handleSubmit} className="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10 relative">
         {/* Optional Title and Metadata row */}
         <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <input
@@ -482,12 +490,12 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Entry title (optional, Gemini will craft one)"
-            className="w-full sm:flex-1 rounded-lg border border-sep bg-[#0D0D0D] px-3.5 py-2.5 text-sm text-white placeholder:text-stone-600 focus:border-gold focus:outline-none font-serif italic"
+            className="w-full sm:flex-1 rounded-xl glass-input px-4 py-3 text-sm text-white placeholder:text-stone-500 focus:outline-none font-serif italic"
           />
 
           {/* Tag Input */}
           <div className="flex w-full sm:w-auto items-center gap-1.5">
-            <Tag className="h-3.5 w-3.5 text-stone-500 shrink-0" />
+            <Tag className="h-3.5 w-3.5 text-amber-400 shrink-0" />
             <input
               id="input-entry-tags"
               type="text"
@@ -495,24 +503,24 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleAddTag}
               placeholder="Add tag + Enter"
-              className="w-full sm:w-36 rounded-lg border border-sep bg-[#0D0D0D] px-3 py-2 text-xs text-white placeholder:text-stone-600 focus:border-gold focus:outline-none font-sans"
+              className="w-full sm:w-40 rounded-xl glass-input px-3.5 py-2.5 text-xs text-white placeholder:text-stone-500 focus:outline-none font-sans"
             />
           </div>
         </div>
 
         {/* Rendered Tag Badges */}
         {tags.length > 0 && (
-          <div className="mb-4 flex flex-wrap gap-1.5">
+          <div className="mb-4 flex flex-wrap gap-2">
             {tags.map((t) => (
               <span
                 key={t}
-                className="inline-flex items-center gap-1 rounded-md border border-sep bg-[#141414] px-2.5 py-0.5 text-xs text-gold font-sans"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs text-amber-300 font-sans backdrop-blur-md"
               >
                 #{t}
                 <button
                   type="button"
                   onClick={() => handleRemoveTag(t)}
-                  className="text-stone-400 hover:text-white cursor-pointer ml-1"
+                  className="text-amber-400/70 hover:text-amber-200 cursor-pointer ml-0.5 font-bold"
                 >
                   &times;
                 </button>
@@ -529,7 +537,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
         {/* Prompt Starters (show if thread is empty) */}
         {turns.length === 0 && (
           <div className="mb-4">
-            <span className="text-[10px] uppercase tracking-[0.2em] font-sans text-stone-400">
+            <span className="text-[10px] uppercase tracking-[0.2em] font-sans text-stone-400 font-medium">
               Inspiration Prompts:
             </span>
             <div className="mt-2 flex flex-wrap gap-2">
@@ -538,7 +546,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                   key={i}
                   type="button"
                   onClick={() => setPromptText(starter)}
-                  className="rounded-full border border-sep bg-[#0D0D0D] px-3 py-1 text-[11px] text-stone-300 hover:border-gold hover:text-white transition-colors cursor-pointer text-left font-serif italic"
+                  className="rounded-full border border-white/10 bg-black/40 px-3.5 py-1.5 text-[11px] text-stone-300 hover:border-amber-500/40 hover:text-white transition-all duration-200 cursor-pointer text-left font-serif italic backdrop-blur-md"
                 >
                   {starter.length > 50 ? starter.slice(0, 50) + "..." : starter}
                 </button>
@@ -559,22 +567,22 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 ? "Continue your reflection..."
                 : `Write your ${mode} here... (e.g. How do I strip back the noise to find the essential truth of the design?)`
             }
-            className="w-full resize-y rounded-xl border border-sep bg-[#050505] p-4 text-base sm:text-lg text-white placeholder:text-stone-600 focus:border-gold focus:outline-none leading-relaxed font-serif italic"
+            className="w-full resize-y rounded-2xl glass-input p-5 text-base sm:text-lg text-white placeholder:text-stone-500 focus:outline-none leading-relaxed font-serif italic"
           />
         </div>
 
         {/* Action Controls Footer */}
-        <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
+        <div className="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2 border-t border-white/05">
           <div className="flex items-center gap-3 text-xs text-stone-400 font-sans">
             <span className="flex items-center gap-1.5">
-              <Layers className="h-3.5 w-3.5 text-gold" />
+              <Layers className="h-3.5 w-3.5 text-amber-400" />
               <span className="text-[10px] uppercase tracking-widest">Model:</span>
-              <code className="rounded border border-sep bg-[#0D0D0D] px-1.5 py-0.5 text-[11px] text-gold font-mono">
+              <code className="rounded-md border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[11px] text-amber-300 font-mono">
                 {modelUsed}
               </code>
             </span>
             <span>&bull;</span>
-            <span className="text-[10px] uppercase tracking-widest">{promptText.length} chars</span>
+            <span className="text-[10px] uppercase tracking-widest text-stone-400">{promptText.length} chars</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -583,7 +591,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 type="button"
                 id="btn-copy-latest"
                 onClick={handleCopy}
-                className="flex items-center gap-1.5 rounded-lg border border-sep bg-[#0D0D0D] px-3 py-2 text-[10px] uppercase tracking-[0.2em] font-sans text-stone-300 hover:border-gold hover:text-white transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 px-3.5 py-2.5 text-[10px] uppercase tracking-[0.2em] font-sans text-stone-300 hover:border-amber-500/40 hover:text-white transition-all cursor-pointer backdrop-blur-md"
               >
                 {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                 <span>{copied ? "Copied" : "Copy"}</span>
@@ -594,20 +602,20 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               id="btn-submit-reflection"
               type="submit"
               disabled={loading || !promptText.trim()}
-              className="flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-2.5 text-[10px] uppercase tracking-[0.2em] font-sans font-medium text-black shadow-lg hover:bg-[#C5A059] hover:text-black active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              className="flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 px-7 py-3 text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-black shadow-xl shadow-amber-500/20 hover:shadow-2xl hover:shadow-amber-500/35 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border border-amber-200/50"
             >
               {loading ? (
                 <>
-                  <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-stone-600 border-t-black"></div>
+                  <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-black/30 border-t-black"></div>
                   <span>Synthesizing...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="h-3.5 w-3.5 text-[#8E6E3A]" />
+                  <Sparkles className="h-3.5 w-3.5 text-black" />
                   <span>
                     {turns.length > 0 ? "Send Follow-up" : `Synthesize ${modeOptions.find((m) => m.id === mode)?.label}`}
                   </span>
-                  <Send className="h-3 w-3 ml-0.5 opacity-80" />
+                  <Send className="h-3 w-3 ml-0.5 opacity-90" />
                 </>
               )}
             </button>

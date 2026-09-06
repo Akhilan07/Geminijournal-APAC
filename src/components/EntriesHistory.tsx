@@ -125,12 +125,14 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
   return (
     <div className="relative mx-auto w-full max-w-5xl px-4 py-8 sm:px-8">
       {/* Header */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-sep pb-6">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <h2 className="font-serif text-3xl sm:text-4xl font-light text-white tracking-tight">
-            <span className="italic">Reflection Archives</span>
+            <span className="italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-100 to-amber-300">
+              Reflection Archives
+            </span>
           </h2>
-          <p className="mt-1 text-xs sm:text-sm text-[#A8A8A8] font-sans font-light">
+          <p className="mt-1 text-xs sm:text-sm text-stone-300 font-sans font-light">
             {entries.length} preserved {entries.length === 1 ? "entry" : "entries"} securely stored in Cloud Firestore.
           </p>
         </div>
@@ -138,9 +140,9 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
         <button
           id="btn-new-entry-from-history"
           onClick={onNewEntry}
-          className="flex items-center justify-center gap-2 rounded-xl border border-sep bg-[#0D0D0D] px-4 py-2.5 text-[10px] uppercase tracking-[0.2em] font-sans text-stone-300 shadow-sm hover:border-gold hover:text-white transition-all cursor-pointer"
+          className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-[10px] uppercase tracking-[0.2em] font-sans text-stone-300 shadow-sm hover:border-amber-500/40 hover:text-white transition-all cursor-pointer backdrop-blur-md"
         >
-          <PlusCircle className="h-4 w-4 text-gold" />
+          <PlusCircle className="h-4 w-4 text-amber-400" />
           <span>New Reflection</span>
         </button>
       </div>
@@ -150,14 +152,14 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           {/* Search bar */}
           <div className="relative flex-1">
-            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-500" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-400/70" />
             <input
               id="input-search-history"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by topic, keyword, or reflections..."
-              className="w-full rounded-xl border border-sep bg-[#0D0D0D] py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-stone-600 focus:border-gold focus:outline-none font-serif italic shadow-sm"
+              className="w-full rounded-2xl glass-input py-3 pl-11 pr-4 text-sm text-white placeholder:text-stone-500 focus:outline-none font-serif italic shadow-sm"
             />
           </div>
 
@@ -168,10 +170,10 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
                 key={m}
                 id={`filter-mode-${m}`}
                 onClick={() => setSelectedMode(m)}
-                className={`rounded-lg px-3 py-2 text-[10px] uppercase tracking-[0.2em] font-sans transition-colors whitespace-nowrap cursor-pointer ${
+                className={`rounded-xl px-3.5 py-2.5 text-[10px] uppercase tracking-[0.2em] font-sans transition-all duration-200 whitespace-nowrap cursor-pointer backdrop-blur-md ${
                   selectedMode === m
-                    ? "border border-[#C5A059] bg-[#141414] text-white shadow-sm"
-                    : "border border-sep bg-[#0D0D0D] text-stone-400 hover:border-gold/60 hover:text-white"
+                    ? "bg-gradient-to-r from-amber-400 to-amber-500 text-black font-bold shadow-md shadow-amber-500/20"
+                    : "border border-white/10 bg-black/30 text-stone-300 hover:border-amber-500/30 hover:bg-white/5"
                 }`}
               >
                 {m}
@@ -183,14 +185,14 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
         {/* Tag Filters (if any) */}
         {allTags.length > 0 && (
           <div className="flex items-center gap-2 overflow-x-auto text-xs text-stone-400 py-1">
-            <span className="flex items-center gap-1 text-[10px] uppercase tracking-widest font-sans text-stone-500">
-              <Tag className="h-3 w-3 text-gold" />
-              <span>Tags:</span>
+            <span className="flex items-center gap-1 text-[10px] uppercase tracking-widest font-sans text-stone-400 font-medium">
+              <Tag className="h-3 w-3 text-amber-400" />
+              <span>Filter Tags:</span>
             </span>
             {selectedTag && (
               <button
                 onClick={() => setSelectedTag(null)}
-                className="rounded-md border border-sep bg-stone-800 px-2 py-0.5 text-stone-200 font-sans text-[10px] uppercase tracking-widest hover:border-gold cursor-pointer"
+                className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-2.5 py-1 text-rose-300 font-sans text-[10px] uppercase tracking-widest hover:bg-rose-500/20 cursor-pointer backdrop-blur-md"
               >
                 Clear filter &times;
               </button>
@@ -199,10 +201,10 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
               <button
                 key={t}
                 onClick={() => setSelectedTag(selectedTag === t ? null : t)}
-                className={`rounded-md px-2.5 py-0.5 text-xs font-sans transition-colors cursor-pointer ${
+                className={`rounded-lg px-3 py-1 text-xs font-sans transition-all duration-200 cursor-pointer backdrop-blur-md ${
                   selectedTag === t
-                    ? "border border-gold bg-[#141414] text-gold"
-                    : "border border-sep bg-[#0D0D0D] text-stone-400 hover:border-gold hover:text-white"
+                    ? "border border-amber-500/40 bg-amber-500/20 text-amber-300 font-bold"
+                    : "border border-white/10 bg-black/30 text-stone-300 hover:border-amber-500/30 hover:text-white"
                 }`}
               >
                 #{t}
@@ -215,7 +217,7 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
       {/* Loading state */}
       {loading && entries.length === 0 && (
         <div className="py-16 text-center">
-          <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-stone-700 border-t-gold mb-3"></div>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-2 border-amber-500/20 border-t-amber-400 mb-3 shadow-lg shadow-amber-500/20"></div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-sans">Accessing private records from Firestore...</p>
         </div>
       )}
@@ -224,15 +226,15 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
       {!loading && filteredEntries.length === 0 && (
         <div
           id="history-empty-state"
-          className="rounded-2xl border border-sep bg-[#080808] p-12 text-center"
+          className="glass-panel rounded-3xl p-12 text-center border border-white/10"
         >
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-sep bg-[#0D0D0D] text-gold mb-4">
-            <BookOpen className="h-5 w-5" />
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-400 mb-4 shadow-lg shadow-amber-500/10">
+            <BookOpen className="h-6 w-6" />
           </div>
-          <h3 className="font-serif text-xl font-light text-white italic">
+          <h3 className="font-serif text-2xl font-light text-white italic">
             {entries.length === 0 ? "The silence is the soil..." : "No matching reflections"}
           </h3>
-          <p className="mx-auto mt-2 max-w-sm text-xs text-[#A8A8A8] font-sans">
+          <p className="mx-auto mt-2 max-w-sm text-xs text-stone-300 font-sans font-light">
             {entries.length === 0
               ? "Begin by recording your first introspective journal entry or asking Gemini for guidance."
               : "Adjust your query or remove filters to explore other entries."}
@@ -240,9 +242,9 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
           <div className="mt-6">
             <button
               onClick={onNewEntry}
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] font-sans font-medium text-black hover:bg-[#C5A059] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 px-6 py-3 text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-black hover:shadow-xl hover:shadow-amber-500/25 transition-all cursor-pointer"
             >
-              <PlusCircle className="h-4 w-4" />
+              <PlusCircle className="h-4 w-4 text-black" />
               <span>Compose Reflection</span>
             </button>
           </div>
@@ -261,24 +263,24 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
               key={item.id}
               id={`entry-card-${item.id}`}
               onClick={() => onSelectEntry(item)}
-              className="group relative rounded-2xl border border-sep bg-[#080808] p-6 shadow-sm hover:border-gold hover:bg-[#0c0c0c] transition-all cursor-pointer"
+              className="glass-card group relative rounded-2xl p-6 shadow-md hover:border-amber-500/40 hover:bg-black/40 transition-all duration-300 cursor-pointer border border-white/10"
             >
               {/* Card Header */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <span
-                    className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] uppercase tracking-widest font-sans font-medium ${badge.color}`}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[10px] uppercase tracking-widest font-sans font-bold text-amber-300 backdrop-blur-md"
                   >
-                    <Icon className="h-3 w-3 text-gold" />
+                    <Icon className="h-3 w-3 text-amber-400" />
                     <span>{badge.label}</span>
                   </span>
 
-                  <h3 className="font-serif text-lg font-light text-white group-hover:text-gold transition-colors italic">
+                  <h3 className="font-serif text-xl font-normal text-stone-100 group-hover:text-amber-300 transition-colors italic">
                     {item.title || "Untitled Reflection"}
                   </h3>
 
                   {turnCount > 1 && (
-                    <span className="rounded-full border border-sep bg-[#0D0D0D] px-2 py-0.5 text-[9px] uppercase tracking-widest font-sans text-gold">
+                    <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[9px] uppercase tracking-widest font-sans font-bold text-amber-300">
                       {turnCount} turns
                     </span>
                   )}
@@ -288,9 +290,9 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
                   )}
                 </div>
 
-                <div className="flex items-center gap-3 text-xs text-stone-500 font-sans">
+                <div className="flex items-center gap-3 text-xs text-stone-400 font-sans">
                   <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-stone-400">
-                    <Calendar className="h-3 w-3 text-gold" />
+                    <Calendar className="h-3 w-3 text-amber-400" />
                     <span>
                       {new Date(item.createdAt).toLocaleDateString(undefined, {
                         month: "short",
@@ -305,7 +307,7 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
                     <button
                       title="Copy content"
                       onClick={(e) => handleCopyText(e, item)}
-                      className="rounded-md p-1.5 text-stone-500 hover:bg-[#0D0D0D] hover:text-gold transition-colors"
+                      className="rounded-lg p-1.5 text-stone-400 hover:bg-white/10 hover:text-amber-300 transition-colors"
                     >
                       {copiedId === item.id ? (
                         <Check className="h-3.5 w-3.5 text-emerald-400" />
@@ -316,7 +318,7 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
                     <button
                       title="Delete entry"
                       onClick={(e) => handleDelete(e, item.id)}
-                      className="rounded-md p-1.5 text-stone-500 hover:bg-rose-950/50 hover:text-rose-400 transition-colors"
+                      className="rounded-lg p-1.5 text-stone-400 hover:bg-rose-950/60 hover:text-rose-400 transition-colors"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -325,40 +327,40 @@ export const EntriesHistory: React.FC<EntriesHistoryProps> = ({
               </div>
 
               {/* Prompt snippet */}
-              <div className="mb-3 text-xs text-[#A8A8A8] font-sans">
-                <span className="text-[10px] uppercase tracking-widest text-stone-400 font-sans">User: </span>
-                <span className="font-serif italic text-sm text-white/90 line-clamp-2 leading-relaxed">
+              <div className="mb-3 text-xs text-stone-300 font-sans">
+                <span className="text-[10px] uppercase tracking-widest text-stone-400 font-sans font-medium">User: </span>
+                <span className="font-serif italic text-sm text-stone-200 line-clamp-2 leading-relaxed">
                   "{item.prompt}"
                 </span>
               </div>
 
               {/* AI response preview */}
-              <div className="rounded-xl bg-[#0D0D0D] border-l-2 border-[#C5A059] border-t border-r border-b border-sep p-4 text-xs text-[#D1D1D1]">
-                <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-gold mb-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-gold"></div>
+              <div className="rounded-xl bg-black/40 border-l-4 border-amber-400 border-white/10 p-4 text-xs text-stone-300 backdrop-blur-md">
+                <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-amber-300 mb-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></div>
                   <span>Insight by Gemini 3.6 Flash</span>
                 </div>
-                <p className="line-clamp-2 leading-relaxed text-[#A8A8A8] font-sans">
+                <p className="line-clamp-2 leading-relaxed text-stone-300 font-sans font-light">
                   {item.aiResponse}
                 </p>
               </div>
 
               {/* Tags & Footer */}
-              <div className="mt-4 flex items-center justify-between pt-3 border-t border-sep text-xs">
+              <div className="mt-4 flex items-center justify-between pt-3 border-t border-white/10 text-xs">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {(item.tags || []).map((t) => (
                     <span
                       key={t}
-                      className="rounded-md border border-sep bg-[#0D0D0D] px-2 py-0.5 text-[10px] text-gold font-sans"
+                      className="rounded-md border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] text-amber-300 font-sans"
                     >
                       #{t}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] font-sans text-stone-400 group-hover:text-gold transition-colors">
+                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-stone-400 group-hover:text-amber-300 transition-colors">
                   <span>Open &amp; Continue</span>
-                  <ArrowUpRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  <ArrowUpRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 text-amber-400" />
                 </div>
               </div>
             </div>

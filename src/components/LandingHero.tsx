@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Sparkles, Shield, KeyRound, Database, ArrowRight, Bot, Lock, CheckCircle2, AlertCircle } from "lucide-react";
+import { Sparkles, ArrowRight, Bot, Lock, Database, AlertCircle, Compass, MapPin } from "lucide-react";
 import { loginWithGoogle } from "../lib/firebase";
 
 interface LandingHeroProps {
@@ -20,7 +20,6 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onLoginSuccess }) => {
       }
     } catch (err: any) {
       console.error("Sign-in failed:", err);
-      // Friendly message for popup cancellation or network error
       if (err?.code === "auth/popup-closed-by-user") {
         setErrorMsg("Sign-in window was closed. Please try again.");
       } else {
@@ -32,22 +31,24 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="relative flex min-h-[calc(100vh-80px)] flex-col justify-center px-4 py-16 sm:px-6 lg:px-8 bg-[#050505]">
-      <div className="absolute top-0 left-0 w-full accent-line"></div>
-      <div className="mx-auto w-full max-w-4xl text-center">
+    <div className="relative flex min-h-[calc(100vh-80px)] flex-col justify-center px-4 py-16 sm:px-6 lg:px-8 bg-transparent">
+      <div className="mx-auto w-full max-w-5xl text-center relative z-10">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-sep bg-[#0D0D0D] px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] font-sans text-gold shadow-xs mb-8">
-          <Sparkles className="h-3.5 w-3.5 text-gold" />
-          <span>Gemini 3.6 Flash &bull; Cloud Firestore</span>
+        <div className="inline-flex items-center gap-2.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-5 py-2 text-xs uppercase tracking-[0.2em] font-sans text-amber-300 shadow-lg shadow-amber-500/10 mb-8 backdrop-blur-md">
+          <Sparkles className="h-4 w-4 text-amber-400 animate-pulse" />
+          <span>Gemini 3.6 Flash &bull; Location-Aware Firestore</span>
         </div>
 
         {/* Display Typography */}
-        <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light tracking-tight text-white leading-tight">
-          A tranquil sanctuary for your thoughts, <span className="italic text-[#C5A059]">reflections</span> &amp; creative ideas.
+        <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-light tracking-tight text-white leading-tight">
+          A tranquil sanctuary for your thoughts, <br className="hidden sm:inline" />
+          <span className="italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 drop-shadow-sm">
+            reflections
+          </span> &amp; creative ideas.
         </h1>
 
-        <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg text-[#A8A8A8] leading-relaxed font-sans font-light">
-          Sign in to access your private, isolated journal. Converse with Gemini across multi-turn reflections, explore creative brainstorming angles, and distill complex days into crisp syntheses.
+        <p className="mx-auto mt-7 max-w-2xl text-base sm:text-xl text-stone-300 leading-relaxed font-sans font-light">
+          Sign in to access your private, isolated journal. Converse with Gemini across multi-turn reflections, pin memory locations with Google Maps, and distill complex days into crisp syntheses.
         </p>
 
         {/* Primary CTA */}
@@ -56,16 +57,17 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onLoginSuccess }) => {
             id="btn-google-signin"
             onClick={handleSignIn}
             disabled={loading}
-            className="flex items-center justify-center gap-3 rounded-xl bg-white px-7 py-3.5 text-xs uppercase tracking-[0.2em] font-sans font-medium text-black shadow-lg hover:bg-[#C5A059] hover:text-black active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+            className="group relative flex items-center justify-center gap-3.5 rounded-2xl bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 px-8 py-4 text-xs uppercase tracking-[0.25em] font-sans font-bold text-black shadow-xl shadow-amber-500/20 hover:shadow-2xl hover:shadow-amber-500/35 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer overflow-hidden border border-amber-200/50"
           >
+            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             {loading ? (
-              <div className="flex items-center gap-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-stone-600 border-t-black"></div>
+              <div className="flex items-center gap-2.5">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black"></div>
                 <span>Connecting to Google...</span>
               </div>
             ) : (
               <>
-                <svg className="h-4 w-4" viewBox="0 0 24 24">
+                <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
                     d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"
@@ -84,7 +86,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onLoginSuccess }) => {
                   />
                 </svg>
                 <span>Sign in with Google</span>
-                <ArrowRight className="h-4 w-4 ml-1 opacity-70" />
+                <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
               </>
             )}
           </button>
@@ -92,53 +94,53 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onLoginSuccess }) => {
           {errorMsg && (
             <div
               id="signin-error-banner"
-              className="flex items-center gap-2 rounded-lg bg-rose-950/50 border border-rose-800 px-4 py-2 text-xs text-rose-300 font-sans"
+              className="flex items-center gap-2 rounded-xl bg-rose-950/60 border border-rose-800/80 px-4 py-2.5 text-xs text-rose-300 font-sans backdrop-blur-md"
             >
-              <AlertCircle className="h-4 w-4 shrink-0" />
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
               <span>{errorMsg}</span>
             </div>
           )}
 
-          <p className="text-[11px] uppercase tracking-widest text-stone-400 font-sans">
+          <p className="text-[11px] uppercase tracking-widest text-stone-400 font-sans mt-1">
             Federated Google Identity &bull; Zero Password Storage
           </p>
         </div>
 
         {/* Architectural Highlights Grid */}
         <div className="mt-20 grid grid-cols-1 gap-6 sm:grid-cols-3 text-left">
-          <div className="rounded-2xl border border-sep bg-[#0D0D0D] p-7 shadow-xs hover:border-gold transition-colors">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-stone-900 text-gold mb-5 border border-sep">
+          <div className="glass-card rounded-2xl p-7 relative group border border-white/10 hover:border-amber-500/40">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 mb-5 border border-amber-500/20 group-hover:scale-110 transition-transform">
               <Bot className="h-5 w-5" />
             </div>
-            <h3 className="font-serif text-lg font-light text-white">
+            <h3 className="font-serif text-xl font-medium text-stone-100">
               Gemini 3.6 Flash
             </h3>
-            <p className="mt-2.5 text-xs text-[#A8A8A8] leading-relaxed font-sans">
+            <p className="mt-2.5 text-xs text-stone-300 leading-relaxed font-sans font-light">
               Multi-turn conversational reflections, insightful syntheses, and creative brainstorming ladders configured with automated fault tolerance.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-sep bg-[#0D0D0D] p-7 shadow-xs hover:border-gold transition-colors">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-stone-900 text-gold mb-5 border border-sep">
-              <Database className="h-5 w-5" />
+          <div className="glass-card rounded-2xl p-7 relative group border border-white/10 hover:border-amber-500/40">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 mb-5 border border-amber-500/20 group-hover:scale-110 transition-transform">
+              <MapPin className="h-5 w-5" />
             </div>
-            <h3 className="font-serif text-lg font-light text-white">
-              Owner-Isolated Firestore
+            <h3 className="font-serif text-xl font-medium text-stone-100">
+              Location-Bound Memories
             </h3>
-            <p className="mt-2.5 text-xs text-[#A8A8A8] leading-relaxed font-sans">
-              Hardened attribute security rules strictly isolate your journal entries under <code className="bg-[#050505] px-1.5 py-0.5 rounded text-[11px] text-gold font-mono">/users/&#123;uid&#125;/interactions</code> so no other user can access your data.
+            <p className="mt-2.5 text-xs text-stone-300 leading-relaxed font-sans font-light">
+              Attach precise Google Maps coordinates and reverse-geocoded place names to reflections to relive where moments occurred.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-sep bg-[#0D0D0D] p-7 shadow-xs hover:border-gold transition-colors">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-stone-900 text-gold mb-5 border border-sep">
-              <Lock className="h-5 w-5" />
+          <div className="glass-card rounded-2xl p-7 relative group border border-white/10 hover:border-amber-500/40">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 mb-5 border border-amber-500/20 group-hover:scale-110 transition-transform">
+              <Database className="h-5 w-5" />
             </div>
-            <h3 className="font-serif text-lg font-light text-white">
-              Zero-Exposure Secrets
+            <h3 className="font-serif text-xl font-medium text-stone-100">
+              Owner-Isolated Firestore
             </h3>
-            <p className="mt-2.5 text-xs text-[#A8A8A8] leading-relaxed font-sans">
-              Gemini API keys and infrastructure credentials remain strictly guarded on the backend server, never leaking into client browser bundles.
+            <p className="mt-2.5 text-xs text-stone-300 leading-relaxed font-sans font-light">
+              Hardened attribute security rules strictly isolate your journal entries under <code className="bg-black/50 px-1.5 py-0.5 rounded text-[11px] text-amber-300 font-mono">/users/&#123;uid&#125;/interactions</code>.
             </p>
           </div>
         </div>

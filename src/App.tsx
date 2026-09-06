@@ -113,47 +113,55 @@ export default function App() {
 
   if (authLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#050505]">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-stone-700 border-t-gold mb-3"></div>
-          <p className="font-serif italic text-sm text-stone-400">Navigating to Reflections...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#030304] relative overflow-hidden">
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="text-center relative z-10">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-amber-500/20 border-t-amber-400 mb-4 shadow-lg shadow-amber-500/20"></div>
+          <p className="font-serif italic text-base text-amber-200/70 tracking-wide">Navigating to Reflections...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#050505] text-[#D1D1D1] font-sans selection:bg-gold selection:text-black">
-      <Navbar
-        user={user}
-        onLogout={handleLogout}
-        onNewEntry={handleNewEntry}
-        activeView={activeView}
-        setActiveView={setActiveView}
-        entriesCount={entries.length}
-        isConnected={isConnected}
-      />
+    <div className="min-h-screen flex flex-col bg-[#030304] text-[#E2E8F0] font-sans selection:bg-amber-500/30 selection:text-white relative overflow-hidden">
+      {/* Dynamic Ambient Background Glow Elements */}
+      <div className="fixed -top-32 -left-32 w-[550px] h-[550px] rounded-full bg-amber-600/15 blur-[130px] pointer-events-none glow-blob-1 z-0" />
+      <div className="fixed -bottom-40 -right-40 w-[650px] h-[650px] rounded-full bg-indigo-900/20 blur-[150px] pointer-events-none glow-blob-2 z-0" />
+      <div className="fixed top-1/3 right-1/4 w-[400px] h-[400px] rounded-full bg-amber-500/05 blur-[110px] pointer-events-none z-0" />
 
-      <main className="flex-1">
-        {!user ? (
-          <LandingHero onLoginSuccess={() => setActiveView("editor")} />
-        ) : activeView === "editor" ? (
-          <JournalEditor
-            user={user}
-            initialEntry={activeEditingEntry}
-            onEntrySaved={handleEntrySaved}
-            onViewHistory={() => setActiveView("history")}
-          />
-        ) : (
-          <EntriesHistory
-            entries={entries}
-            loading={entriesLoading}
-            onSelectEntry={(entry) => setSelectedDetailEntry(entry)}
-            onDeleteEntry={handleDeleteEntry}
-            onNewEntry={handleNewEntry}
-          />
-        )}
-      </main>
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Navbar
+          user={user}
+          onLogout={handleLogout}
+          onNewEntry={handleNewEntry}
+          activeView={activeView}
+          setActiveView={setActiveView}
+          entriesCount={entries.length}
+          isConnected={isConnected}
+        />
+
+        <main className="flex-1">
+          {!user ? (
+            <LandingHero onLoginSuccess={() => setActiveView("editor")} />
+          ) : activeView === "editor" ? (
+            <JournalEditor
+              user={user}
+              initialEntry={activeEditingEntry}
+              onEntrySaved={handleEntrySaved}
+              onViewHistory={() => setActiveView("history")}
+            />
+          ) : (
+            <EntriesHistory
+              entries={entries}
+              loading={entriesLoading}
+              onSelectEntry={(entry) => setSelectedDetailEntry(entry)}
+              onDeleteEntry={handleDeleteEntry}
+              onNewEntry={handleNewEntry}
+            />
+          )}
+        </main>
+      </div>
 
       {/* Detail Modal */}
       {selectedDetailEntry && (
