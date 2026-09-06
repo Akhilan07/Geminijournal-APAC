@@ -70,7 +70,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   const [currentId, setCurrentId] = useState<string>(() => crypto.randomUUID());
   const [turns, setTurns] = useState<ChatTurn[]>([]);
   const [latestAiResponse, setLatestAiResponse] = useState<string>("");
-  const [modelUsed, setModelUsed] = useState<string>("gemini-3.6-flash");
+  const [modelUsed, setModelUsed] = useState<string>("gemini-2.0-flash");
 
   // Status & Transaction Verification
   const [loading, setLoading] = useState(false);
@@ -93,7 +93,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
         { role: "model", text: initialEntry.aiResponse, timestamp: initialEntry.updatedAt },
       ]);
       setPromptText("");
-      setModelUsed(initialEntry.modelUsed || "gemini-3.6-flash");
+      setModelUsed(initialEntry.modelUsed || "gemini-2.0-flash");
     }
   }, [initialEntry]);
 

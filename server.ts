@@ -51,19 +51,17 @@ app.get("/api/config", (_req: Request, res: Response) => {
 });
 
 /**
- * Production Directive 6.1: Resilient Model Fallback Ladder (Skill Rule 3)
- * Ordered by availability and latency:
- * 1. Primary: "gemini-2.5-flash"
- * 2. High-Availability Fallback: "gemini-2.5-flash-lite"
- * 3. Next-Gen Primary: "gemini-3.6-flash"
- * 4. High-Availability Fallback: "gemini-3.1-flash-lite"
- * 5. Dynamic Alias: "gemini-flash-latest"
+ * Resilient & Ultra-Fast Model Fallback Ladder
+ * Ordered by real-time speed and low latency:
+ * 1. Primary Ultra-Fast: "gemini-2.0-flash" (sub-second response)
+ * 2. Instant Lite: "gemini-2.0-flash-lite"
+ * 3. High Availability: "gemini-1.5-flash"
+ * 4. Dynamic Alias: "gemini-flash-latest"
  */
 const MODEL_FALLBACK_LADDER = [
-  "gemini-2.5-flash",
-  "gemini-2.5-flash-lite",
-  "gemini-3.6-flash",
-  "gemini-3.1-flash-lite",
+  "gemini-2.0-flash",
+  "gemini-2.0-flash-lite",
+  "gemini-1.5-flash",
   "gemini-flash-latest",
 ] as const;
 
@@ -89,6 +87,7 @@ async function generateContentWithFallback(
         config: {
           systemInstruction,
           temperature: 0.7,
+          maxOutputTokens: 850,
         },
       });
 
