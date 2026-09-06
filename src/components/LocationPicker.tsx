@@ -389,29 +389,32 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({ location, onChan
               <span>Initializing Google Maps...</span>
             </div>
           ) : mapsAvailable === false ? (
-            /* Fallback Mode when GOOGLE_MAPS_API_KEY is missing or invalid */
-            <div className="rounded-xl border border-amber-900/60 bg-amber-950/20 p-4 text-xs text-amber-200 font-sans space-y-3">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 text-gold shrink-0" />
-                <span className="font-medium">Google Maps API key not set or unavailable.</span>
+            /* Manual Location Input when Maps SDK Key is not active */
+            <div className="rounded-2xl border border-amber-500/30 bg-black/40 p-4 text-xs text-stone-300 font-sans space-y-3 backdrop-blur-md">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-amber-400 shrink-0" />
+                  <span className="font-bold text-amber-300">Record Place or Memory Location</span>
+                </div>
+                <span className="text-[10px] uppercase tracking-widest text-stone-400 font-mono">Spatial Metadata</span>
               </div>
               <p className="text-[11px] text-stone-400">
-                You can still manually record the location name or address below:
+                Enter the name of the place, landmark, or city associated with this entry:
               </p>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <input
                   type="text"
                   value={manualAddress}
                   onChange={(e) => setManualAddress(e.target.value)}
-                  placeholder="Enter location (e.g. Kyoto Gardens, Japan)"
-                  className="flex-1 rounded-lg border border-sep bg-[#050505] px-3 py-2 text-xs text-white placeholder:text-stone-600 focus:border-gold focus:outline-none"
+                  placeholder="e.g. Kyoto Gardens, Japan or Home Studio"
+                  className="flex-1 rounded-xl glass-input px-3.5 py-2.5 text-xs text-white placeholder:text-stone-500 focus:outline-none"
                 />
                 <button
                   type="button"
                   onClick={handleManualSave}
-                  className="rounded-lg bg-[#C5A059] px-3 py-2 text-xs text-black font-medium hover:bg-white transition-colors cursor-pointer"
+                  className="rounded-xl bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 px-4 py-2.5 text-xs font-bold text-black hover:shadow-lg hover:shadow-amber-500/20 transition-all cursor-pointer shadow-md"
                 >
-                  Save
+                  Save Location
                 </button>
               </div>
             </div>

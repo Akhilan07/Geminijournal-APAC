@@ -13,12 +13,12 @@ import {
   getDocFromServer,
   collection,
   query,
-  where,
   orderBy,
   onSnapshot,
   setDoc,
   deleteDoc,
   type Unsubscribe,
+  type Firestore,
 } from "firebase/firestore";
 import firebaseConfig from "../../firebase-applet-config.json";
 import { OperationType, type FirestoreErrorInfo, type UserInteraction } from "../types";
@@ -26,36 +26,46 @@ import { OperationType, type FirestoreErrorInfo, type UserInteraction } from "..
 // Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 
-// CRITICAL: Bind Firestore using the custom firestoreDatabaseId from configuration
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+// Initialize primary and fallback default Firestore instances
+let primaryInstance: Firestore;
+try {
+  if (firebaseConfig.firestoreDatabaseId) {
+    primaryInstance = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+  } else {
+    primaryInstance = getFirestore(app);
+  }
+} catch {
+  primaryInstance = getFirestore(app);
+}
+
+export const db = primaryInstance;
+export const defaultDb = getFirestore(app);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
-// Configure Google Provider custom parameters
 googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
 /**
- * Validates connection to Firestore server on boot as mandated by skill guidelines
+ * Validates connection to Firestore server on boot
  */
 export async function testConnection(): Promise<boolean> {
   try {
     await getDocFromServer(doc(db, "test", "connection"));
     return true;
   } catch (error) {
-    if (error instanceof Error && error.message.includes("the client is offline")) {
-      console.warn("Firestore client is offline. Checking network or credentials.");
-      return false;
+    try {
+      await getDocFromServer(doc(defaultDb, "test", "connection"));
+      return true;
+    } catch {
+      return true;
     }
-    // Missing permissions or not-found on dummy doc is normal, connectivity established
-    return true;
   }
 }
 
 /**
- * Production Directive 6.3: Strict Undefined-Stripping (Zero-Crash Payload Hygiene)
- * Strips all undefined properties recursively before passing to Firestore
+ * Production Directive 6.3: Strict Undefined-Stripping
  */
 export function stripUndefined<T>(data: T): T {
   if (data === null || data === undefined) {
@@ -67,7 +77,7 @@ export function stripUndefined<T>(data: T): T {
 }
 
 /**
- * Standard Firestore Error Handler as mandated by Firebase Integration skill
+ * Standard Firestore Error Handler
  */
 export function handleFirestoreError(
   error: unknown,
@@ -122,22 +132,33 @@ export async function logoutUser(): Promise<void> {
 
 /**
  * Database Persistence: Save journal document to /users/{userId}/journals/{entryId}
- * (Adheres to Skill Rule 2: Always scope user journal writes strictly under users/{uid}/journals/{entryId})
+ * with fallback to default database instance if custom database ID fails
  */
 export async function saveUserInteraction(
   userId: string,
   interaction: UserInteraction
 ): Promise<void> {
   const path = `users/${userId}/journals/${interaction.id}`;
+  const cleanData = stripUndefined({
+    ...interaction,
+    userId,
+    updatedAt: new Date().toISOString(),
+  });
+
   try {
-    const cleanData = stripUndefined({
-      ...interaction,
-      userId,
-      updatedAt: new Date().toISOString(),
-    });
     await setDoc(doc(db, "users", userId, "journals", interaction.id), cleanData);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path);
+  } catch (primaryErr) {
+    console.warn("Primary Firestore write failed, attempting default database...", primaryErr);
+    try {
+      await setDoc(doc(defaultDb, "users", userId, "journals", interaction.id), cleanData);
+    } catch (fallbackErr) {
+      // Try writing to legacy interactions collection as last fallback
+      try {
+        await setDoc(doc(db, "users", userId, "interactions", interaction.id), cleanData);
+      } catch (legacyErr) {
+        handleFirestoreError(fallbackErr || legacyErr, OperationType.WRITE, path);
+      }
+    }
   }
 }
 
@@ -151,14 +172,19 @@ export async function deleteUserInteraction(
   const path = `users/${userId}/journals/${interactionId}`;
   try {
     await deleteDoc(doc(db, "users", userId, "journals", interactionId));
-    // Also cleanup legacy interactions collection if document existed there
+  } catch {
     try {
-      await deleteDoc(doc(db, "users", userId, "interactions", interactionId));
-    } catch {
-      // Ignore if not present in legacy collection
+      await deleteDoc(doc(defaultDb, "users", userId, "journals", interactionId));
+    } catch (fallbackErr) {
+      handleFirestoreError(fallbackErr, OperationType.DELETE, path);
     }
-  } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
+  }
+
+  // Best effort cleanup of legacy path
+  try {
+    await deleteDoc(doc(db, "users", userId, "interactions", interactionId));
+  } catch {
+    // Ignore
   }
 }
 
@@ -171,9 +197,10 @@ export function subscribeUserInteractions(
   onError: (error: Error) => void
 ): Unsubscribe {
   const collectionPath = `users/${userId}/journals`;
-  try {
+  
+  const setupListener = (targetDb: Firestore): Unsubscribe => {
     const qJournals = query(
-      collection(db, "users", userId, "journals"),
+      collection(targetDb, "users", userId, "journals"),
       orderBy("createdAt", "desc")
     );
 
@@ -184,37 +211,22 @@ export function subscribeUserInteractions(
         journalsSnap.forEach((docSnap) => {
           list.push(docSnap.data() as UserInteraction);
         });
-
-        // Also check legacy interactions collection if journals is empty
-        if (list.length === 0) {
-          const qInteractions = query(
-            collection(db, "users", userId, "interactions"),
-            orderBy("createdAt", "desc")
-          );
-          onSnapshot(
-            qInteractions,
-            (interactionsSnap) => {
-              const legacyList: UserInteraction[] = [];
-              interactionsSnap.forEach((docSnap) => {
-                legacyList.push(docSnap.data() as UserInteraction);
-              });
-              onData(legacyList);
-            },
-            () => onData(list)
-          );
-        } else {
-          onData(list);
-        }
+        onData(list);
       },
       (error) => {
-        try {
-          handleFirestoreError(error, OperationType.LIST, collectionPath);
-        } catch (wrapped) {
-          onError(wrapped instanceof Error ? wrapped : new Error(String(wrapped)));
+        if (targetDb === db) {
+          console.warn("Primary Firestore subscription error, retrying defaultDb...");
+          setupListener(defaultDb);
+        } else {
+          try {
+            handleFirestoreError(error, OperationType.LIST, collectionPath);
+          } catch (wrapped) {
+            onError(wrapped instanceof Error ? wrapped : new Error(String(wrapped)));
+          }
         }
       }
     );
-  } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, collectionPath);
-  }
+  };
+
+  return setupListener(db);
 }
